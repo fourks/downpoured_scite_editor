@@ -1,0 +1,36 @@
+
+Release notes
+-------------------
+gcc makefile not updated. gtk directory not updated
+
+Known issues:
+	ScApp.Fullscreen()
+	ScEditor.GetStyleAt()
+	ScEditor.AssignCmdKey()
+	ScApp.Tools() #not sure of effect
+	ScApp.ToolWin() #not sure of effect
+	
+	The following are untested
+	void	ScEditor.SetWordChars(, string characters)
+	void	ScEditor.SetAutoCFillUps(, string characterSet)
+	void	ScEditor.SetMarginLeft(, int pixelWidth)
+	void	ScEditor.SetMarginRight(, int pixelWidth)
+	int	ScEditor.PointXFromPosition(, position pos)
+	int	ScEditor.PointYFromPosition(, position pos)
+	void	ScEditor.SetWhitespaceChars(, string characters)
+
+Certain methods can read past end of file. This is a limitation of Scintilla.
+
+If the app exists while a MessageBox is open, an error will be shown.
+
+------------
+python25.zip contains much of the Python 2.5 standard lib.
+I took most of the commonly used modules, preferring the smallest in filesize.
+When seeing a statement like import os,
+Python will automatically look for a file named python25.zip, and so this works well.
+
+         348,160 msvcr71.dll
+is the c runtime library. One reason I'm using Python 2.5 and not 2.6 is that
+the the c runtime dll can simply be dropped in the same directory, 
+without requiring installing the dll with the os or setting up a manifest file.
+

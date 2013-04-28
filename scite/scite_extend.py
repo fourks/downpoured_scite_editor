@@ -18,11 +18,14 @@ def OnClose(sFilename):
 	if echoEvents: print 'See OnClose'
 
 def OnMarginClick():
-	ScEditor.Write('hi') # example of how to call a method on the ScEditor object
-	print 'hi'
-	if echoEvents: print 'See OnMarginClick'
+	if echoEvents: 
+		ScEditor.Write('hi') # example of how to call a method on the ScEditor object
+		print 'hi'
+		print 'See OnMarginClick'
 
 def OnSwitchFile(sFilename):
+	import plugins
+	plugins.recordposition.recordposition()
 	if echoEvents: print 'See OnSwitchFile'
 	
 def OnBeforeSave(sFilename):
@@ -39,6 +42,8 @@ def OnSavePointLeft():
 
 def OnChar(nChar):
 	# returning False here has no effect
+	import plugins
+	plugins.recordposition.recordposition()
 	pass
 
 def OnDoubleClick():
@@ -53,15 +58,17 @@ def OnDwellEnd():
 def OnUserListSelection(nType, sSelection):
 	if echoEvents: print 'See OnUserListSelection', nType, sSelection
 
-def OnKey(keycode, fShift, fCtrl, fAlt):
-	import exceptions
-	try:
-		import scite_extend_tests
-	except exceptions.ImportError, e:
-		if str(e) == 'No module named scite_extend_tests':
-			return None
-		else:
-			raise
-	return scite_extend_tests.RunTestSet(keycode, fShift, fCtrl, fAlt)
+# commented out so that perf is not affected.
+#~ def OnKey(keycode, fShift, fCtrl, fAlt):
+	#~ if echoEvents: 
+		#~ import exceptions
+		#~ try:
+			#~ import scite_extend_tests
+		#~ except exceptions.ImportError, e:
+			#~ if str(e) == 'No module named scite_extend_tests':
+				#~ return None
+			#~ else:
+				#~ raise
+		#~ return scite_extend_tests.RunTestSet(keycode, fShift, fCtrl, fAlt)
 
 

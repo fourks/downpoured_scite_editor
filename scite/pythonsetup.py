@@ -2,7 +2,6 @@
 # SciTE Python Extension
 # Ben Fisher, 2011
 
-print 'Loading Python extension.'
 import CScite
 import exceptions
 
@@ -103,6 +102,33 @@ class CSciteApp():
 			return CScite.app_GetConstant(s)
 		else:
 			return (lambda: CScite.app_SciteCommand(s))
+	
+	def GetFilePath(self):
+		return self.GetProperty('FilePath')
+	def GetFileName(self):
+		return self.GetProperty('FileNameExt')
+	def GetLanguage(self):
+		return self.GetProperty('Language')
+	def GetCurrentWord(self):
+		return self.GetProperty('CurrentWord')
+	def GetSciteDirectory(self):
+		return self.GetProperty('SciteDefaultHome')
+	def GetSciteUserDirectory(self):
+		return self.GetProperty('SciteUserHome')
+	
+	# limitation: if this is called many times, it will only run once. alternative is to write own grep script, or to use symlinks of desired directories
+	# benefit: faster than launching external program
+	def ScheduleFindInFiles(self, sQuery, sDirectory=None, filetypes=None, wholeword=None, matchcase=None):
+		# find.input is not the right property to set.
+		# also, don't change find.command to '', because user might want to use custom app.
+		CScite.ScApp.SetProperty('find.what', sQuery)
+		
+		if sDirectory!=None: CScite.ScApp.SetProperty('find.directory', sDirectory)
+		if filetypes!=None: CScite.ScApp.SetProperty('find.files', filetypes)
+		if wholeword!=None: CScite.ScApp.SetProperty('find.filesnow.wholeword', '1' if wholeword else '')
+		if matchcase!=None: CScite.ScApp.SetProperty('find.filesnow.matchcase', '1' if matchcase else '')
+		CScite.ScApp.FindInFilesStart()
+		
 
 # some methods start with "get" but are actually a "function". user shouldn't care about this implementation detail
 CScite._dictIsScintillaFnNotGetter = {

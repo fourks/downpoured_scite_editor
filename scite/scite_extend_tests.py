@@ -5,15 +5,14 @@ import CScite
 from CScite import ScEditor, ScOutput, ScApp
 import exceptions
 import sys
+import base64 #try importing a nontrivial library, loads from python25.zip
+import ctypes #try importing a nontrivial library, loads from python25.zip and _ctypes
 
 CurrentPane = ScEditor # press Ctrl+' to switch
 winNewLines = True
 
 
 def test_0_0():
-	import base64 #try importing a nontrivial library, loads from python25.zip
-	import ctypes #try importing a nontrivial library, loads from python25.zip and _ctypes
-
 	ScApp.MsgBox('Test:MessageBox')
 	ScApp.Trace('Test:')
 	ScApp.Trace('Tracing')
@@ -111,7 +110,7 @@ def test_0_2():
 	ScApp.MsgBox( 'Closed.')
 	
 	toggles = ((ScApp.SelMargin, 'SelMargin'),(ScApp.ToggleOutput, 'ToggleOutput'),
-		(ScApp.ToggleParameters, 'ToggleParameters'),(ScApp.Find, 'Find'),(ScApp.FindInFiles, 'FindInFiles'))
+		(ScApp.ToggleParameters, 'ToggleParameters'),(ScApp.Find, 'Find'),(ScApp.FindInFilesDialog, 'FindInFilesDialog'))
 	for fn, name in toggles:
 		fn(); ScApp.MsgBox( 'Starting '+name)
 		fn(); ScApp.MsgBox( 'Stopping '+name)
@@ -325,11 +324,11 @@ def test_1_3():
 	ScApp.MsgBox('Marker and EOL gone')
 	# test the ones that are overridden
 	
-	#~ print CurrentPane.GetMarginLeft()
-	#~ print CurrentPane.GetMarginRight()
+	print CurrentPane.GetMarginLeft()
+	print CurrentPane.GetMarginRight()
 	#~ CurrentPane.SetMarginLeft(None,5)
-	#~ CurrentPane.SetMarginLeft(80)
-	#~ CurrentPane.SetMarginRight(80)
+	CurrentPane.SetMarginLeft(80)
+	CurrentPane.SetMarginRight(80)
 	#~ CurrentPane.SetZoom(CurrentPane.GetZoom()+1)
 	
 	
@@ -345,7 +344,22 @@ def test_1_4():
 	print 'GetLexerLanguage', CurrentPane.GetLexerLanguage()
 	expectNotEqual(CurrentPane.GetLexerLanguage(), 0)
 	
+def test_1_5():
+	CurrentPane.ClearAll(); CurrentPane.Write('L0ab\nL1ab\nL2ab\nL3\nL4\nL555')
+	CurrentPane.GotoPos(1)
+	#~ print CurrentPane.GetCurLine()
+	#~ print CurrentPane.GetLine(1)
+	print CurrentPane.GetText(5)
 	
+	#~ CurrentPane.CopyText(1,'aff')
+	CurrentPane.CopyText('aff')
+	print CurrentPane.GetLength()
+	
+	CurrentPane.SetMarginLeft(50)
+	print CurrentPane.GetMarginLeft()
+	#~ CurrentPane.SetWordChars('l','a')
+	ScEditor.SetText('d14245')
+
 ##################################
 
 testLevel = 0
