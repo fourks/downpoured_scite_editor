@@ -1,68 +1,67 @@
-
 # SciTE Python Extension
 # Ben Fisher, 2011
 
 from CScite import ScEditor, ScOutput, ScApp
 
-def OnStart():
-	print 'See OnStart'
+def callFromCmd():
+	ScApp.MsgBox('Called from cmd')
 
-def OnMarginClick():
-	ScEditor.Insert( ScEditor.GetCurrentPos(), 'hi')
-	print 'See OnMarginClick'
-	pass
+echoEvents = False
+
+def OnStart():
+	if echoEvents: print 'See OnStart'
 
 def OnOpen(sFilename):
-	print 'See OnOpen'
-	pass
+	if echoEvents: print 'See OnOpen'
 
 def OnClose(sFilename):
-	print 'See OnClose'
-	pass
-	
+	if echoEvents: print 'See OnClose'
+
+def OnMarginClick():
+	ScEditor.Write('hi') # example of how to call a method on the ScEditor object
+	print 'hi'
+	if echoEvents: print 'See OnMarginClick'
+
 def OnSwitchFile(sFilename):
-	print 'See OnSwitchFile'
-	pass
+	if echoEvents: print 'See OnSwitchFile'
 	
 def OnBeforeSave(sFilename):
-	print 'See OnBeforeSave'
-	pass
+	if echoEvents: print 'See OnBeforeSave'
 	
 def OnSave(sFilename):
-	print 'See OnSave'
-	pass
+	if echoEvents: print 'See OnSave'
 	
 def OnSavePointReached():
-	print 'See OnSavePointReached'
-	pass
+	if echoEvents: print 'See OnSavePointReached'
 	
 def OnSavePointLeft():
-	print 'See OnSavePointLeft'
-	pass
-
-def OnKey( keycode, fShift, fCtrl, fAlt):
-	pass
+	if echoEvents: print 'See OnSavePointLeft'
 
 def OnChar(nChar):
-	# returning False here does nothing
+	# returning False here has no effect
 	pass
 
 def OnDoubleClick():
-	print 'See OnDoubleClick'
-	pass
-
+	if echoEvents: print 'See OnDoubleClick'
+	
 def OnDwellStart(nPos, sWord):
-	print 'See OnDwellStart'
-	pass
+	if echoEvents: print 'See OnDwellStart'
 
 def OnDwellEnd():
-	print 'See OnDwellEnd'
-	pass
+	if echoEvents: print 'See OnDwellEnd'
 
 def OnUserListSelection(nType, sSelection):
-	print 'See OnUserListSelection'
-	pass
+	if echoEvents: print 'See OnUserListSelection', nType, sSelection
 
-
+def OnKey(keycode, fShift, fCtrl, fAlt):
+	import exceptions
+	try:
+		import scite_extend_tests
+	except exceptions.ImportError, e:
+		if str(e) == 'No module named scite_extend_tests':
+			return None
+		else:
+			raise
+	return scite_extend_tests.RunTestSet(keycode, fShift, fCtrl, fAlt)
 
 
