@@ -19,6 +19,8 @@
 *.suo
 *.user
 *.sln.docstates
+*.sdf
+*.opensdf
 
 # Build results
 
