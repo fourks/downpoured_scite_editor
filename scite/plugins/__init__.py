@@ -1,5 +1,4 @@
 
-from start_plugins import *
+from text_manip import *
 import recordposition
-import search_plugins
-
+from searchsip import SciteSearchSip, SciteSearchSipToggle, SciteSearchSipRebuild
