@@ -1,0 +1,16 @@
+
+
+# the binaries in scite.exe.win32.zip shouldn't go in repo
+_ctypes.pyd
+_socket.pyd
+msvcr71.dll
+python25.dll
+SciLexer.dll
+Scintilla.dll
+python25.zip
+SciTE.exe
+
+
+properties/pyplugin_generated.properties
+properties/locale.properties
+

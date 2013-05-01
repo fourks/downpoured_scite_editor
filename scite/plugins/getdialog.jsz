@@ -1,4 +1,0 @@
-
-// if(argv[1])
-var s = Dialog.input('SipSearch', 'Input:')
-print(s)
