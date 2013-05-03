@@ -68,7 +68,9 @@ class GenProperties():
 
 gen = GenProperties()
 gen.currentIndex = 30
+assert 'python.exe' in g_pythonpath
 gen.addraw('pyplugin.pypath=%s'%g_pythonpath)
+gen.addraw('pyplugin.pypathw=%s'%g_pythonpath.replace('python.exe','pythonw.exe'))
 gen.addraw('pyplugin.lnzpath=%s'%g_lnzpath)
 
 #basic overrides
@@ -81,7 +83,11 @@ gen.regidm('Ctrl+Alt+F4','IDM_CLOSEALL')
 
 # (you can go 'back' and 'forward' to where you have made edits with Ctrl+minus)
 gen.regpy('Ctrl+-','global_recordposition_back', 'plugins.plugin_recordposition.goBack()')
-gen.regpy('Ctrl+Shift+-','global_recordposition_back', 'plugins.plugin_recordposition.goForward()')
+gen.regpy('Ctrl+Shift+-','global_recordposition_forward', 'plugins.plugin_recordposition.goForward()')
+
+# switch between cpp and h
+gen.regpy('Ctrl+Alt+H','cpp_switchheader', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')
+
 
 # personal plugins
 if os.path.exists('nocpy_custom'):
