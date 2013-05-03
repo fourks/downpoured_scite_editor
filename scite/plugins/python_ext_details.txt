@@ -1,0 +1,43 @@
+# SciTE Python Extension
+# Ben Fisher, 2011
+
+See downpoured_scite_editor/scite/readme.txt for an overview.
+Here are specific implementation details.
+
+Why embed Python 2.5 and not 2.6?
+	Installation and Windows XP compatibility is much simpler with Python 2.5. All that's needed is msvcr71.dll.
+	In my experience if 2.6 features are needed, they can be executed 
+
+How much of the Python standard library is included?
+	python25.zip contains much of the Python 2.5 standard library.
+	Python automatically loads modules from a file named 'python25.zip'.
+	I included most of the library including sockets and ctypes, you should be able to
+	add anything missing to python25.zip.
+	
+Performance:
+	Calling from Python into Scite is very quick. Binary searches are used to find the right IDM constant.
+	Python is heavier than Lua but the difference in boot time should not be noticeable on any recent machine.
+	The pythonsetup.py wrapper provides a more convenient interface, so that one doesn't need to account for 
+	the differences in how SciTE getters, setters, and functions pass and return data. 
+
+Known issues:
+	gcc makefile not updated.
+	gtk directory not updated.
+	ScApp.Fullscreen()
+	ScEditor.GetStyleAt()
+	ScEditor.AssignCmdKey()
+	
+	The following are not officially tested+supported
+	void	ScEditor.SetWordChars(, string characters)
+	void	ScEditor.SetAutoCFillUps(, string characterSet)
+	void	ScEditor.SetMarginLeft(, int pixelWidth)
+	void	ScEditor.SetMarginRight(, int pixelWidth)
+	int	ScEditor.PointXFromPosition(, position pos)
+	int	ScEditor.PointYFromPosition(, position pos)
+	void	ScEditor.SetWhitespaceChars(, string characters)
+
+	Certain methods can read past end of file. This is a limitation of Scintilla.
+
+	If the app exists while a MessageBox is open, an error will be shown.
+
+

@@ -3,12 +3,13 @@
 
 from CScite import ScEditor, ScOutput, ScApp
 
-def callFromCmd():
-    ScApp.MsgBox('Called from cmd')
-
 echoEvents = False
 
 def OnStart():
+    import os
+    if not os.path.exists(os.path.join(ScApp.GetSciteDirectory(), 'properties', 'pyplugin_generated.properties')): 
+        print 'SciTE: please 1) open generateproperties.py in an editor and specify the path to python'
+        print '2) run generateproperties.py to enable keyboard shortcuts.'
     if echoEvents: print 'See OnStart'
 
 def OnOpen(sFilename):
@@ -24,8 +25,6 @@ def OnMarginClick():
         print 'See OnMarginClick'
 
 def OnSwitchFile(sFilename):
-    import plugins
-    plugins.recordposition.recordposition()
     if echoEvents: print 'See OnSwitchFile'
     
 def OnBeforeSave(sFilename):
@@ -43,7 +42,7 @@ def OnSavePointLeft():
 def OnChar(nChar):
     # returning False here has no effect
     import plugins
-    plugins.recordposition.recordposition()
+    plugins.plugin_recordposition.recordposition()
     pass
 
 def OnDoubleClick():
@@ -58,17 +57,17 @@ def OnDwellEnd():
 def OnUserListSelection(nType, sSelection):
     if echoEvents: print 'See OnUserListSelection', nType, sSelection
 
-# commented out so that perf is not affected.
-#~ def OnKey(keycode, fShift, fCtrl, fAlt):
-    #~ if echoEvents: 
-        #~ import exceptions
-        #~ try:
-            #~ import scite_extend_tests
-        #~ except exceptions.ImportError, e:
-            #~ if str(e) == 'No module named scite_extend_tests':
-                #~ return None
-            #~ else:
-                #~ raise
-        #~ return scite_extend_tests.RunTestSet(keycode, fShift, fCtrl, fAlt)
+# disabled out so that perf is not affected.
+def OnKey_inactive_example(keycode, fShift, fCtrl, fAlt):
+    if echoEvents: 
+        import exceptions
+        try:
+            import scite_extend_tests
+        except exceptions.ImportError, e:
+            if str(e) == 'No module named scite_extend_tests':
+                return None
+            else:
+                raise
+        return scite_extend_tests.RunTestSet(keycode, fShift, fCtrl, fAlt)
 
 

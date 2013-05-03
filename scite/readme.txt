@@ -1,22 +1,61 @@
 
-SciTE Python Extension
-Version 0.5
+SciTE Code Editor + Python
 Ben Fisher, 2011
-scitewiki@gmail.com
+github.com/downpoured/downpoured_scite_editor
 
-Overview
--------------------
-You can now write plugins and scripts in Python to customize SciTE. 
-You have access to the powerful standard library of Python.
+A lightweight code editor with easily-scriptable Python plugins.
+
 
 Usage
 -------------------
-If you open the global options file, you will see a command for 'Python run script'.
-When you run this command (from the Tools menu or by pressing Ctrl+Alt+k),
-a sample Python script will run.
+(If SciTE.exe is not present, unzip the contents of scite.exe.win32.zip into the scite directory).
+Run SciTE.exe, and start using it to write code!
 
-Modify this sample script by editing 'callFromCmd' in scite_extend.py.
-You can call one of the many functions documented in scite_extend_doc.txt.
-scite_extend.py also shows the callbacks that will be run. You can also put code here.
+SciTE has many helpful keyboard shortcuts. Some of my favorites are:
+	Ctrl Q to comment-out a line
+	Ctrl D to duplicate a line
+	Ctrl 1 to copy the path of the current file
+
+
+Overview
+-------------------
+This is a fork of the excellent SciTE code editor. Mainline SciTE can be customized
+with Lua scripts, but Lua is not a 'batteries included' language, and it can be less-than-
+straightforward to write these customizations.
+
+By using Python, on the other hand, one gains access to Python's standard library and 
+can use much existing Python code, and I aim to simplify the process of adding plugins.
+
+Contact scitewiki@gmail.com with any questions.
+
+Adding a simple plugin
+-------------------
+Simple plugins are a one-time action triggered by a keyboard shortcut or from the Tools menu.
+Open generateproperties.py in an editor.
+Ensure that g_pythonpath points to your machine's Python installation.
+Add the end of generateproperties.py, add a registration line for your plugin.
+
+If your plugin does not need to interact with the editor, use spelling as an example.
+	This style of plugin is run in a separate python.exe process;
+	any results from stdout are printed in the side pane.
+
+If your plugin does need to interact with the editor, use switch_header as an example.
+	This style of plugin can access the ScEditor and ScApp objects.
+	You will need to edit /scite/plugins/__init__.py to import your code.
+	For a full reference of what a plugin can call, see scite/plugins/scite_extend_doc.txt.
+
+Then, run generateproperties.py and restart SciTE.
+
+
+Adding an advanced plugin
+-----------------
+Advanced plugins can run code without being explicitly triggered. For example, the record_position
+plugin runs after every key press to record the current line and file, so that you can use Ctrl+Minus
+to navigate where you have been changing the file.
+
+To add an advanced plugin, edit
+scite_extend.py
+For example, to run code whenever switching tabs, add a line to OnSwitchFile to call into your plugin.
+Refer to OnChar to see how record_position is implemented.
 
 

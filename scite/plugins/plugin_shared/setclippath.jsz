@@ -1,0 +1,3 @@
+
+if(argv[1])
+Clipboard.setText(argv[1])
