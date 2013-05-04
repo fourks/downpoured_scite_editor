@@ -81,12 +81,15 @@ gen.regidm('Ctrl+Shift+X','2337') #linecut
 gen.regidm('Ctrl+L','2338') #linedelete (delete instead of cut)
 gen.regidm('Ctrl+Alt+F4','IDM_CLOSEALL')
 
-# (you can go 'back' and 'forward' to where you have made edits with Ctrl+minus)
-gen.regpy('Ctrl+-','global_recordposition_back', 'plugins.plugin_recordposition.goBack()')
-gen.regpy('Ctrl+Shift+-','global_recordposition_forward', 'plugins.plugin_recordposition.goForward()')
+# go 'back' and 'forward' to where you have made edits in the file. (Ctrl+minus)
+gen.regpy('Ctrl+-','G Navigate Back', 'plugins.plugin_recordposition.goBack()')
+gen.regpy('Ctrl+Shift+-','G Navigate Forward', 'plugins.plugin_recordposition.goForward()')
+
+# copy current filepath (Ctrl+1)
+gen.reg(None,'G Copy filepath', r'"$(pyplugin.lnzpath)" "$(SciteDefaultHome)\plugins\plugin_shared\setclippath.jsz" "$(FileDir)"', subsys=Subsys.exec_async, n=1)
 
 # switch between cpp and h
-gen.regpy('Ctrl+Alt+H','cpp_switchheader', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')
+gen.regpy('Ctrl+Alt+H','Cpp Switch Header', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')
 
 
 # personal plugins
