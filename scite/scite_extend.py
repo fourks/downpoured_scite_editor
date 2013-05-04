@@ -6,11 +6,12 @@ from CScite import ScEditor, ScOutput, ScApp
 echoEvents = False
 
 def OnStart():
-    import os
+    import os, sys
     if not os.path.exists(os.path.join(ScApp.GetSciteDirectory(), 'properties', 'pyplugin_generated.properties')): 
         print 'SciTE: please 1) open generateproperties.py in an editor and specify the path to python'
         print '2) run generateproperties.py to enable keyboard shortcuts.'
     if echoEvents: print 'See OnStart'
+    sys.path.append(os.path.join(ScApp.GetSciteDirectory(), 'plugins', 'plugin_shared'))
 
 def OnOpen(sFilename):
     if echoEvents: print 'See OnOpen'

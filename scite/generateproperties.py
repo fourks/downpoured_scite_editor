@@ -81,6 +81,9 @@ gen.regidm('Ctrl+Shift+X','2337') #linecut
 gen.regidm('Ctrl+L','2338') #linedelete (delete instead of cut)
 gen.regidm('Ctrl+Alt+F4','IDM_CLOSEALL')
 
+# coding references (not using pythonext, no keyboard shortcut)
+gen.reg(None,'G Ascii/Colors', r'"$(pyplugin.pypath)" "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\main.py" "$(SciteDefaultHome)"', subsys=Subsys.exec_wait)
+
 # go 'back' and 'forward' to where you have made edits in the file. (Ctrl+minus)
 gen.regpy('Ctrl+-','G Navigate Back', 'plugins.plugin_recordposition.goBack()')
 gen.regpy('Ctrl+Shift+-','G Navigate Forward', 'plugins.plugin_recordposition.goForward()')
