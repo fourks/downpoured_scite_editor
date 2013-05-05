@@ -3,3 +3,4 @@
 
 from modifytext import *
 from atreplace import *
+from autoclosetags import *

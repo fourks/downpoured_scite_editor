@@ -44,7 +44,8 @@ def OnChar(nChar):
     # returning False here has no effect
     import plugins
     plugins.plugin_recordposition.recordposition()
-    pass
+    plugins.plugin_modifytext.autoclosetags(nChar)
+    if echoEvents: print 'See OnChar'
 
 def OnDoubleClick():
     if echoEvents: print 'See OnDoubleClick'

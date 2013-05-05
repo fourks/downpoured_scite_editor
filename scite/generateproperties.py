@@ -101,6 +101,7 @@ gen.regpy('Ctrl+Alt+H','Cpp Switch Header', 'plugins.plugin_switchheader.switchh
 gen.regpy('Ctrl+Shift+M','G Modify Text...', 'plugins.plugin_modifytext.main()')
 gen.regpy('Ctrl+Shift+2','G Replace @', 'plugins.plugin_modifytext.atReplace()')
 
+# html tag auto-close (not registered here, see scite_extend.py)
 
 # personal plugins
 if os.path.exists('nocpy_custom'):
