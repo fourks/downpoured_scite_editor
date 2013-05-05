@@ -103,6 +103,21 @@ gen.regpy('Ctrl+Shift+2','G Replace @', 'plugins.plugin_modifytext.atReplace()')
 
 # html tag auto-close (not registered here, see scite_extend.py)
 
+# ssip indexed code search
+# search index. if only whitespace selected, prompt 
+gen.regpy('F12','IndexedImpl', 'plugins.SciteSearchSip("IndexedImpl")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Shift+F12','IndexedDefn', 'plugins.SciteSearchSip("IndexedDefn")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Alt+F12','IndexedUsage', 'plugins.SciteSearchSip("IndexedOther")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Ctrl+F12','IndexedAll', 'plugins.SciteSearchSip("IndexedAll")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Alt+Shift+F12','PromptToggle', 'plugins.SciteSearchSipToggle()',sFiletype='$(file.patterns.c.like)')
+#also prints things out
+gen.regpy('Ctrl+Alt+Shift+F12','IndexRebuild', 'plugins.SciteSearchSipRebuild()',sFiletype='$(file.patterns.c.like)')
+
+
+#gen.regpy('F12','IndexedImpl', 'plugins.SciteSearchSip("IndexedImpl")',sFiletype='$(file.patterns.c.like)')
+#gen.regpy('Ctrl+F12','IndexedAll', 'plugins.SciteSearchSip("IndexedDefn")',sFiletype='$(file.patterns.c.like)')
+
+
 # personal plugins
 if os.path.exists('nocpy_custom'):
     import nocpy_custom
