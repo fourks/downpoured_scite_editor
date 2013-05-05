@@ -44,7 +44,17 @@ def ShowChoiceDialog(sPrompt, arOptions):
     root.wait_window(d.top)
     return retval[0]
 
+
 if __name__=='__main__':
-    r = ShowChoiceDialog('Show which tool?', ['ascii table', 'color picker'] )
-    print r
-    
+    import sys
+    if len(sys.argv)<=1:
+        r = ShowChoiceDialog('Show which tool?', ['ascii table', 'color picker'] )
+        print r
+    else:
+        # print the result to stdout, where it can be read by another process
+        sTitle = sys.argv[1]
+        arOpts = sys.argv[2:]
+        r = ShowChoiceDialog(sTitle, arOpts)
+        if r or r==0:
+            print '|'+str(r)+'|'
+        

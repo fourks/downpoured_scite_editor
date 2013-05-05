@@ -68,9 +68,11 @@ class GenProperties():
 
 gen = GenProperties()
 gen.currentIndex = 30
+pythonw = g_pythonpath.replace('python.exe','pythonw.exe')
 assert 'python.exe' in g_pythonpath
+assert os.path.exists(pythonw)
 gen.addraw('pyplugin.pypath=%s'%g_pythonpath)
-gen.addraw('pyplugin.pypathw=%s'%g_pythonpath.replace('python.exe','pythonw.exe'))
+gen.addraw('pyplugin.pypathw=%s'%pythonw)
 gen.addraw('pyplugin.lnzpath=%s'%g_lnzpath)
 
 #basic overrides
@@ -80,6 +82,7 @@ gen.regidm('Ctrl+;','IDM_OPENGLOBALPROPERTIES')
 gen.regidm('Ctrl+Shift+X','2337') #linecut
 gen.regidm('Ctrl+L','2338') #linedelete (delete instead of cut)
 gen.regidm('Ctrl+Alt+F4','IDM_CLOSEALL')
+gen.regidm('Ctrl+.','IDM_STOPEXECUTE')
 
 # coding references (not using pythonext, no keyboard shortcut)
 gen.reg(None,'G Ascii/Colors', r'"$(pyplugin.pypath)" "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\main.py" "$(SciteDefaultHome)"', subsys=Subsys.exec_wait)
@@ -93,6 +96,10 @@ gen.reg(None,'G Copy filepath', r'"$(pyplugin.lnzpath)" "$(SciteDefaultHome)\plu
 
 # switch between cpp and h
 gen.regpy('Ctrl+Alt+H','Cpp Switch Header', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')
+
+# modify selected text
+gen.regpy('Ctrl+Shift+M','G Modify Text...', 'plugins.plugin_modifytext.main()')
+gen.regpy('Ctrl+Shift+2','G Replace @', 'plugins.plugin_modifytext.atReplace()')
 
 
 # personal plugins
