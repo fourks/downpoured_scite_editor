@@ -85,7 +85,7 @@ gen.regidm('Ctrl+Alt+F4','IDM_CLOSEALL')
 gen.regidm('Ctrl+.','IDM_STOPEXECUTE')
 
 # coding references (not using pythonext, no keyboard shortcut)
-gen.reg(None,'G Ascii/Colors', r'"$(pyplugin.pypath)" "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\main.py" "$(SciteDefaultHome)"', subsys=Subsys.exec_wait)
+gen.reg('Ctrl+Shift+A','G Ascii/Colors', r'"$(pyplugin.pypath)" "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\main.py" "$(SciteDefaultHome)"', subsys=Subsys.exec_wait)
 
 # go 'back' and 'forward' to where you have made edits in the file. (Ctrl+minus)
 gen.regpy('Ctrl+-','G Navigate Back', 'plugins.plugin_recordposition.goBack()')
@@ -93,6 +93,7 @@ gen.regpy('Ctrl+Shift+-','G Navigate Forward', 'plugins.plugin_recordposition.go
 
 # copy current filepath (Ctrl+1)
 gen.reg(None,'G Copy filepath', r'"$(pyplugin.lnzpath)" "$(SciteDefaultHome)\plugins\plugin_shared\setclippath.jsz" "$(FileDir)"', subsys=Subsys.exec_async, n=1)
+gen.reg('Ctrl+Shift+1','G Explore', r'explorer.exe /n,$(FileDir)', subsys=Subsys.windows)
 
 # switch between cpp and h
 gen.regpy('Ctrl+Alt+H','Switch C Header', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')

@@ -7,6 +7,8 @@
 #   auto-close parens
 #   auto-close { and }
 
+from CScite import ScEditor, ScOutput, ScApp
+
 # a bug in pythonext drops last character.
 useLexers = ('xm','hypertex','xml','hypertext')
 xhtmlsingletons= ('br', 'img', 'hr')
@@ -42,11 +44,19 @@ def getCurrentTag():
             break
     return tagname
 
+def closeparensandbraces(nChar):
+    # auto-close ( and {.
+    if nChar==40: c=')'
+    elif nChar==123: c='}'
+    else: return
+    prevpos = ScEditor.GetCurrentPos()
+    ScEditor.ReplaceSel(c)
+    ScEditor.GotoPos(prevpos)
 
 def autoclosetags(nChar):
     # respond only to > characters in an html or xml doc.
+    closeparensandbraces(nChar)
     if nChar!=62: return
-    from CScite import ScEditor, ScOutput, ScApp
     lexername = ScEditor.GetLexerLanguage()
     if lexername not in useLexers: return
     
