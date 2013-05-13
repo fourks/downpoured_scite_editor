@@ -1,4 +1,10 @@
 
+def ShowInputDialog(sPrompt, sTitle):
+    import Tkinter, tkSimpleDialog
+    root = Tkinter.Tk()
+    root.withdraw()
+    urltoopen = tkSimpleDialog.askstring(sTitle, sPrompt)
+    return urltoopen
 
 def ShowChoiceDialog(sPrompt, arOptions):
     import Tkinter
@@ -47,9 +53,16 @@ def ShowChoiceDialog(sPrompt, arOptions):
 
 if __name__=='__main__':
     import sys
+    print sum(map(ord, 'abc'))
     if len(sys.argv)<=1:
         r = ShowChoiceDialog('Show which tool?', ['ascii table', 'color picker'] )
         print r
+    elif sys.argv[1]=='inputdialog':
+        sPrompt = sys.argv[2]
+        sTitle = sys.argv[3]
+        r = ShowInputDialog(sPrompt, sTitle)
+        if r:
+            print '|'+r.replace('|',',')+'|'
     else:
         # print the result to stdout, where it can be read by another process
         sTitle = sys.argv[1]
@@ -57,4 +70,6 @@ if __name__=='__main__':
         r = ShowChoiceDialog(sTitle, arOpts)
         if r or r==0:
             print '|'+str(r)+'|'
+        
+        
         

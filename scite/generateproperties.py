@@ -95,7 +95,7 @@ gen.regpy('Ctrl+Shift+-','G Navigate Forward', 'plugins.plugin_recordposition.go
 gen.reg(None,'G Copy filepath', r'"$(pyplugin.lnzpath)" "$(SciteDefaultHome)\plugins\plugin_shared\setclippath.jsz" "$(FileDir)"', subsys=Subsys.exec_async, n=1)
 
 # switch between cpp and h
-gen.regpy('Ctrl+Alt+H','Cpp Switch Header', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')
+gen.regpy('Ctrl+Alt+H','Switch C Header', 'plugins.plugin_switchheader.switchheader()', sFiletype='$(file.patterns.cpp)')
 
 # modify selected text
 gen.regpy('Ctrl+Shift+M','G Modify Text...', 'plugins.plugin_modifytext.main()')
@@ -104,18 +104,11 @@ gen.regpy('Ctrl+Shift+2','G Replace @', 'plugins.plugin_modifytext.atReplace()')
 # html tag auto-close (not registered here, see scite_extend.py)
 
 # ssip indexed code search
-# search index. if only whitespace selected, prompt 
-gen.regpy('F12','IndexedImpl', 'plugins.SciteSearchSip("IndexedImpl")',sFiletype='$(file.patterns.c.like)')
-gen.regpy('Shift+F12','IndexedDefn', 'plugins.SciteSearchSip("IndexedDefn")',sFiletype='$(file.patterns.c.like)')
-gen.regpy('Alt+F12','IndexedUsage', 'plugins.SciteSearchSip("IndexedOther")',sFiletype='$(file.patterns.c.like)')
-gen.regpy('Ctrl+F12','IndexedAll', 'plugins.SciteSearchSip("IndexedAll")',sFiletype='$(file.patterns.c.like)')
-gen.regpy('Alt+Shift+F12','PromptToggle', 'plugins.SciteSearchSipToggle()',sFiletype='$(file.patterns.c.like)')
-#also prints things out
-gen.regpy('Ctrl+Alt+Shift+F12','IndexRebuild', 'plugins.SciteSearchSipRebuild()',sFiletype='$(file.patterns.c.like)')
-
-
-#gen.regpy('F12','IndexedImpl', 'plugins.SciteSearchSip("IndexedImpl")',sFiletype='$(file.patterns.c.like)')
-#gen.regpy('Ctrl+F12','IndexedAll', 'plugins.SciteSearchSip("IndexedDefn")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('F12','Search C Implementation', 'plugins.plugin_search.ssip_search_indexed("impl")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Shift+F12','Search C Defn', 'plugins.plugin_search.ssip_search_indexed("defn")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Ctrl+F12','Search C Indexed', 'plugins.plugin_search.ssip_search_indexed("all")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Alt+F3','Search C Parent Dir', 'plugins.plugin_search.ssip_search_unindexed("..\\..")',sFiletype='$(file.patterns.c.like)')
+gen.regpy('Alt+Shift+F3','Search C Current Dir', 'plugins.plugin_search.ssip_search_unindexed("")',sFiletype='$(file.patterns.c.like)')
 
 
 # personal plugins

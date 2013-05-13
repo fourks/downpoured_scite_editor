@@ -1,212 +1,89 @@
+# SciTE Python Extension
+# Ben Fisher, 2011
 
-from searchutil import SipException
-import os
-from os.path import join
-import searchutil
-import shutil
+import os, sys
 import searchsipimpl
+import searchutil
+from searchutil import SipException
+import scmsg
+from CScite import ScEditor, ScOutput, ScApp
 
-def searchSip(*args):
-    ret = None
-    try: ret = _searchSip(*args)
-    except SipException,e: print 'Exception: '+str(e)
-    return ret
+# ssip -s word                Search for a word        
+# ssip -start                Re-build index from scratch        
+# ssip -noindex word                Search for a word without using index        
+# ssip -noindexnowhole word                Search for a word without using index        
 
-def searchSipToggle(*args):
-    ret = None
-    try: ret = _searchSipToggle(*args) 
-    except SipException,e: print 'Exception: '+str(e)
-    return ret
+def searchIndexedMain(sModeIn):
+    if sModeIn=='impl': sMode = searchsipimpl.Searchmodes.SEARCH_IMPLS
+    elif sModeIn=='defn': sMode = searchsipimpl.Searchmodes.SEARCH_DEFNS
+    elif sModeIn=='all': sMode = searchsipimpl.Searchmodes.ALL_EXCEPT_COMMENTS
+    else: assert False
+    sPath = ScApp.GetFilePath()
+    inidir = os.path.join(ScApp.GetSciteDirectory(), 'plugins', 'plugin_search')
+    ininame = os.path.join(inidir, 'projects.cfg')
+    ret = searchutil.getprojsection(ininame, sPath)
+    if not ret:
+        if not os.path.exists(ininame): f=open(ininame,'w'); f.write(' '); f.close()
+        n = scmsg.getChoiceShowDialog('This file is not part of a project. Add it to a new project?', ['Yes', 'No'] )
+        if n!=0: return
+        pos1 = 0
+        if n==0:
+            folder, leaf = os.path.split(sPath)
+            f=open(ininame,'a');
+            pos1 = f.tell()
+            print 'pos = ',pos1
+            f.write('\n\n[project_new_%d]\nsrcdir1=%s\n\n'%(sum(map(ord, sPath)), folder))
+            f.close()
+        ScApp.OpenFile(ininame)
+        if pos1: ScEditor.Select(pos1, pos1+20)
+        return
     
-def searchSipRebuild(*args):
-    ret = None
-    try: ret = _searchSipRebuild(*args)
-    except SipException,e: print 'Exception: '+str(e)
-    return ret
+    sProjname, sTxtCfg = ret
+    sQuery = getQuery()
+    searchutil.checkSupportedString(sQuery)
+    sipname = os.path.join(inidir, 'db', 'ssip.exe')
+    fcfg=open(os.path.join(inidir, 'db', 'ssip.cfg'), 'w')
+    fcfg.write(sTxtCfg)
+    assert 'dbpath=' not in sTxtCfg
+    assert len(sProjname)>0 and '\n' not in sProjname
+    fcfg.write('\ndbpath=%s\n'%os.path.join(inidir, 'db', sProjname+'.db'))
+    fcfg.close()
+    
+    os.chdir(os.path.join(inidir, 'db')) # ssip.exe will see that config file
+    rawtext = searchutil.runReturnStdout(sipname, ['-s', sQuery])
+    results = searchsipimpl.filter(sMode, sQuery, rawtext)
+    # todo: if there is only one result, consider opening it automatically
+    searchsipimpl.displayResults(results)
+    
+def searchUnindexedMain(sRelativeDir):
+    print 'searching source-code filetypes in %s.'%sRelativeDir
+    sQuery = getQuery()
+    sPath = ScApp.GetFilePath()
+    searchutil.checkSupportedString(sQuery)
+    inidir = os.path.join(ScApp.GetSciteDirectory(), 'plugins', 'plugin_search')
+    sTxtCfg = createCfgTemporary(sPath, sRelativeDir)
+    fcfg=open(os.path.join(inidir, 'db', 'ssip.cfg'), 'w')
+    sipname = os.path.join(inidir, 'db', 'ssip.exe')
+    fcfg.write(sTxtCfg)
+    fcfg.close()
+    assert 'dbpath=' not in sTxtCfg
+    
+    os.chdir(os.path.join(inidir, 'db')) # ssip.exe will see that config file
+    rawtext = searchutil.runReturnStdout(sipname, ['-noindex', sQuery])
+    print rawtext
 
-
-
-def getsCfgdir(sHome):
-    return join(join(sHome, 'plugins'), 'searchsip_userprefs')
-def getsExePath(sHome):
-    pth = join(join(join(sHome, 'plugins'), 'searchsip'), 'ssip.exe')
-    if not os.path.exists(pth): raise SipException('could not find ssip.exe')
-    return pth
-
-def mapPaths(sCfgdir, sPath, bVerbose=False):
-    sPath = sPath.lower()
-    for fname in os.listdir(sCfgdir):
-        if not fname.lower().endswith('.cfg'): continue
-        if fname=='ssip.cfg': continue
-        fnamefull = join(sCfgdir, fname)
-        f=open(fnamefull ,'r')
-        match = False
-        for line in f:
-            line=line.strip()
-            if line.startswith('srcdir'):
-                spl = line.split('=',1)
-                if len(spl)==2:
-                    wh, wpath = spl
-                    if len(wh.replace('srcdir',''))!=1:
-                        print 'invalid number', line
-                    wpath = wpath.lower()
-                    if len(wpath)>2 and sPath.startswith(wpath):
-                        if bVerbose: print 'match with: '+line
-                        match = True
-                        break
-                else:
-                    print 'invalid line: ',line
-        f.close()
-        if match:
-            return fname
-    return None
-
-def setupCfg(sCfgdir, fname):
-    src = join(sCfgdir, fname)
-    target = join(sCfgdir, 'ssip.cfg')
-    if os.path.exists(target): os.unlink(target)
-    if os.path.exists(target): raise SipException("Can't delete ssip.cfg")
-    shutil.copy(src, target)
-    src = join(sCfgdir, fname+'.db')
-    if os.path.exists(src):
-        target = join(sCfgdir, 'ssip.db')
-        if os.path.exists(target): os.unlink(target)
-        if os.path.exists(target): raise SipException("Can't delete ssip.cfg")
-        os.rename(src, target)
-        return True
-    else:
-        return False
-
-def restoreCfg(sCfgdir, fname):
-    # not needed, and we want to be simple because this is in a finally block
-    # src = join(sCfgdir, 'ssip.cfg')
-    # if os.path.exists(src): os.unlink(src)
-    src = join(sCfgdir, 'ssip.db')
-    if os.path.exists(src):
-        target = join(sCfgdir, fname+'.db')
-        os.rename(src, target)
-
-g_nextShouldPrompt = False
-def getInput(s, sHomedir, sLnzPath):
-    global g_nextShouldPrompt
-    s=s.strip()
-    if not s or g_nextShouldPrompt:
-        g_nextShouldPrompt = False
-        s = searchutil.getString(sHomedir, sLnzPath)
-        s=s.strip()
-        if not s:
-            print 'Canceled.'
-            return None
+def createCfgTemporary(sPath, sRelativeDir):
+    folder, leaf = os.path.split(sPath)
+    if sRelativeDir:
+        folder = os.path.join(folder, sRelativeDir)
+        folder = os.path.normpath(folder) #turn a/b/c/.. into a/b
+    s = '\n[main]\nsrcdir1=%s\n'%folder
     return s
 
-def _searchSip(sMode, sPath, sCurrentWord, sHomedir, sLnzPath):
-    bIsIndex = 'NotIndex' not in sMode
-    sCfgdir = getsCfgdir(sHomedir)
-    fname = mapPaths(sCfgdir, sPath)
-    if not fname:
-        print 'File not mapped.'
-        return
-        
-    s = getInput(sCurrentWord,sHomedir, sLnzPath)
-    if not s:
-        return
-    
-    wasdb = setupCfg(sCfgdir, fname)
-    try:
-        if bIsIndex and not wasdb: print 'Building index for '+fname+'...'
-        os.chdir(sCfgdir) # ssip.exe will see that config file
-        
-        if not bIsIndex:
-            if sMode=='NotIndexedWhole':
-                stdout = searchutil.runReturnStdout(getsExePath(sHomedir), ['-noindex', s])
-            elif sMode=='NotIndexedNotWhole':
-                stdout = searchutil.runReturnStdout(getsExePath(sHomedir), ['-noindexnowhole', s])
-            else:
-                raise SipException('unknown mode')
-        else:
-            searchsipimpl.checkStringOk(s) #will raise exception if string isn't ok
-            rawresults = searchutil.runReturnStdout(getsExePath(sHomedir), ['-s', s])
-            if sMode=='IndexedAll':
-                stdout = rawresults
-            else:
-                searchsipimpl.filter(sMode, s, rawresults)
-                stdout = None
-                
-                
-        if stdout!=None:
-            if not stdout.strip(): print '0 results.'
-            print stdout
-    finally:
-        restoreCfg(sCfgdir, fname)
-    
-
-def _searchSipToggle(sPath, sHomedir):
-    # display some stuff too.
-    global g_nextShouldPrompt
-    sCfgdir = getsCfgdir(sHomedir)
-    fname = mapPaths(sCfgdir, sPath, True)
-    if not fname:
-        print 'File not mapped.'
-        return
-    print 'File mapped to project: '+fname
-    print 'The next search will prompt for string.'
-    g_nextShouldPrompt = True
-    
-def _searchSipRebuild(sPath, sHomedir):
-    sCfgdir = getsCfgdir(sHomedir)
-    fname = mapPaths(sCfgdir, sPath)
-    if not fname:
-        print 'File not mapped.'
-        return
-    target = join(sCfgdir, fname+'.db')
-    if os.path.exists(target): os.unlink(target)
-    wasdb = setupCfg(sCfgdir, fname)
-    try:
-        if wasdb: raise SipException('db file should have been absent')
-        os.chdir(sCfgdir)
-        # ssip.exe will see that config file
-        print 'Re-building index for '+fname+' ...'
-        stdout = searchutil.runReturnStdout(getsExePath(sHomedir), ['-start'])
-        print stdout
-    finally:
-        restoreCfg(sCfgdir, fname)
-
-def Go_Standard(Classobj, s, searchmode):
-    try:
-        ret = Go_Standard_impl(Classobj, s, searchmode)
-    except SipException,e:
-        print 'Exception: '+str(e)
-    return ret
-
-
-if __name__=='__main__':
-    sPath=r'c:\pydev\pyaudio_here\simplesourceindexing\intelliguess\bcaudio\bcaudio.h'
-    sHomedir=r'C:\Users\bfisher\Documents\Fisher Applications\Coding\scite_mine\wscite'
-    sLnzPath=r'C:\Users\bfisher\Documents\Fisher Applications\Utilities\lnzscript\lnzscript.exe'
-    
-    #~ _searchSipRebuild(sPath,sHomedir)
-    #~ _searchSipToggle(sPath,sHomedir)
-    
-    #~ sMode='IndexedAll'
-    #~ sCurrentWord='effect_modulate'
-    #~ _searchSip(sMode, sPath, sCurrentWord, sHomedir, sLnzPath)
-    #~ print
-    
-    #~ sCurrentWord='data_right==NULL) '
-    #~ sMode='NotIndexedNotWhole'
-    #~ _searchSip(sMode, sPath, sCurrentWord, sHomedir, sLnzPath)
-    #~ print
-    #~ sCurrentWord='ftl_fail_'
-    #~ sMode='NotIndexedNotWhole'
-    #~ _searchSip(sMode, sPath, sCurrentWord, sHomedir, sLnzPath)
-    #~ print
-    
-    #~ sCurrentWord='6'
-    #~ sMode='NotIndexedWhole'
-    #~ _searchSip(sMode, sPath, sCurrentWord, sHomedir, sLnzPath)
-    #~ print
-    
-    sMode='IndexedImpl'
-    sCurrentWord='caudiodata_allocate'
-    _searchSip(sMode, sPath, sCurrentWord, sHomedir, sLnzPath)
-    #~ print
+def getQuery():
+    sCurrentWord = ScApp.GetCurrentWord().strip()
+    if not sCurrentWord:
+        sCurrentWord = getInputShowDialog('Enter a search term:', 'Indexed Search')
+        if not sCurrentWord:
+            raise SipException('No search term.')
+    return sCurrentWord

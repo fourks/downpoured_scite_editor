@@ -14,3 +14,9 @@ SciTE.exe
 properties/pyplugin_generated.properties
 properties/locale.properties
 
+
+plugins/plugin_search/db/ssip.exe
+plugins/plugin_search/db/ssip.cfg
+plugins/plugin_search/db/sqlite3.dll
+plugins/plugin_search/db/*.db
+

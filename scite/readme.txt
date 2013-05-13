@@ -26,6 +26,14 @@ straightforward to write these customizations.
 By using Python, on the other hand, one gains access to Python's standard library and 
 can use much existing Python code, and I aim to simplify the process of adding plugins.
 
+To set up the indexed code search plugin, build downpoured_scite_editor/tools/simple_source_index,
+copy downpoured_scite_editor/tools/simple_source_index/release/simple_source_index.exe to 
+downpoured_scite_editor/scite/plugins/plugin_search/db/ssip.exe
+unzip downpoured_scite_editor/tools/simple_source_index/sqlite3.dll.zip (or download from sqlite.org) to
+downpoured_scite_editor/scite/plugins/plugin_search/db/sqlite3.dll
+edit downpoured_scite_editor/scite/plugins/plugin_search/projects.cfg, following the example.
+You can now press F12 to run an indexed code search on the selected term.
+
 Contact scitewiki@gmail.com with any questions.
 
 Adding a simple plugin

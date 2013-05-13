@@ -35,3 +35,20 @@ def getChoiceShowDialog(sTitle, arOptions):
     else:
         return None
     
+def getInputShowDialog(sPrompt, sTitle):
+    from CScite import ScEditor, ScOutput, ScApp
+    import os
+    
+    pydir = ScApp.GetProperty('pyplugin.pypathw')
+    assert 'pythonw.exe' in pydir
+    dlgutil = os.path.join( ScApp.GetSciteDirectory(), 'plugins', 'plugin_shared', 'dlgutil.py')
+    
+    args = [pydir, dlgutil, 'inputdialog', sPrompt, sTitle]
+    sret, status = runGetStdout(args)
+    if status==0 and '|' in sret:
+        a,res,b = sret.split('|')
+        return int(res)
+    else:
+        return None
+    
+    
