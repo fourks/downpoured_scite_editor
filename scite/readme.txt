@@ -2,6 +2,7 @@
 SciTE Code Editor + Python
 Ben Fisher, 2011
 github.com/downpoured/downpoured_scite_editor
+These SciTE modifications and plugins are released under GPLv2.
 
 A lightweight code editor with easily-scriptable Python plugins.
 

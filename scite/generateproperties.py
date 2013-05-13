@@ -85,7 +85,7 @@ gen.regidm('Ctrl+Alt+F4','IDM_CLOSEALL')
 gen.regidm('Ctrl+.','IDM_STOPEXECUTE')
 
 # coding references (not using pythonext, no keyboard shortcut)
-gen.reg('Ctrl+Shift+A','G Ascii/Colors', r'"$(pyplugin.pypath)" "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\main.py" "$(SciteDefaultHome)"', subsys=Subsys.exec_wait)
+gen.reg('Ctrl+Shift+A','G Ascii/Colors', r'"$(pyplugin.pypath)" -u "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\main.py" "$(SciteDefaultHome)"', subsys=Subsys.exec_wait)
 
 # go 'back' and 'forward' to where you have made edits in the file. (Ctrl+minus)
 gen.regpy('Ctrl+-','G Navigate Back', 'plugins.plugin_recordposition.goBack()')
@@ -110,6 +110,9 @@ gen.regpy('Shift+F12','Search C Defn', 'plugins.plugin_search.ssip_search_indexe
 gen.regpy('Ctrl+F12','Search C Indexed', 'plugins.plugin_search.ssip_search_indexed("all")',sFiletype='$(file.patterns.c.like)')
 gen.regpy('Alt+F3','Search C Parent Dir', 'plugins.plugin_search.ssip_search_unindexed("..\\..")',sFiletype='$(file.patterns.c.like)')
 gen.regpy('Alt+Shift+F3','Search C Current Dir', 'plugins.plugin_search.ssip_search_unindexed("")',sFiletype='$(file.patterns.c.like)')
+
+# python: print local vars on unhandled exceptions
+gen.reg('F7','Py PrintErrorContext', r'"$(pyplugin.pypathw)" -u "$(SciteDefaultHome)\plugins\plugin_ind_codingreferences\print_error_context.py" "$(FileNameExt)"', subsys=Subsys.windows, sFiletype='$(file.patterns.py)', savebefore=True)
 
 
 # personal plugins

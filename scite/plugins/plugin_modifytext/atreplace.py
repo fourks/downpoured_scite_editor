@@ -46,16 +46,19 @@ def atReplaceImpl(ssel):
         print sExplain
         return
     
+    crlf = '\r\n' if '\r' in ssel else '\n'
     bIsNumeric = not '@@' in ssel
     if bIsNumeric:
         nNumber=-1
-        sIn = ssel.split('\n')
+        sIn = ssel.split(crlf)
         for i in range(len(sIn)):
             if '@' in sIn[i]: nNumber+= 1
             sIn[i] = sIn[i].replace('@', str(nNumber))
-        sOut = '\n'.join(sIn)
+        sOut = crlf.join(sIn)
     else:
-        sIn = ssel.split('\n')
+        #~ assert '\r' not in ssel
+        sIn = ssel.replace('\\'+crlf,'\\\\_\\\\')
+        sIn = sIn.split(crlf)
         marker = '$!$__mrk$$'
         assert marker not in ssel
         for i in range(len(sIn)):
@@ -70,7 +73,9 @@ def atReplaceImpl(ssel):
             astmp[0] = astmp[0].replace(marker, thepiece)
             astmp[2] = astmp[2].replace(marker, thepiece)
             sIn[i] = astmp[0] + thepiece + astmp[2]
-        sOut = '\n'.join(sIn)
+        sOut = crlf.join(sIn)
+        sOut = sOut.replace('\\\\_\\\\', crlf)
+
     return sOut
     
 def atReplace():
@@ -96,5 +101,13 @@ if __name__=='__main__':
     stest2ret = atReplaceImpl(stest2)
     assert stest2ret == 'bool bRed = darkRed || lightRed;\nbool bGreen = darkGreen || lightGreen;\nbool bBlue = darkBlue || lightBlue;'
     
-    print sExplain
+    # use backslash to hide a newline
+    stest3 = r'''
+dark@red@ = @@*0.3;\
+newcolors.add(dark@@);
+dark@green@ = @@*0.3;\
+newcolors.add(dark@@);'''
+    stest3ret = atReplaceImpl(stest3)
+    assert stest3ret=='\ndarkred = red*0.3;\nnewcolors.add(darkred);\ndarkgreen = green*0.3;\nnewcolors.add(darkgreen);'
     
+    print 'tests pass.'
